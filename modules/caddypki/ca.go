@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os"
 	"path"
 	"sync"
 	"time"
@@ -325,7 +326,8 @@ func (ca CA) genRoot() (rootCert *x509.Certificate, rootKey crypto.Signer, err e
 	}
 	err = ca.storage.Store(ca.ctx, ca.storageKeyRootCert(), rootCertPEM)
 	if err != nil {
-		return nil, nil, fmt.Errorf("saving root certificate: %v", err)
+		cwd, _ := os.Getwd()
+		return nil, nil, fmt.Errorf("saving root certificate rootcertpath:%s; key:%s; cwd: %s; error: %v", ca.rootCertPath, ca.storageKeyRootCert(), cwd, err)
 	}
 	rootKeyPEM, err := certmagic.PEMEncodePrivateKey(rootKey)
 	if err != nil {
